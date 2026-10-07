@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model users {
+  id_users_pk Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  email       String    @unique(map: "email") @db.VarChar(150)
+  password    String    @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.DateTime(0)
+}
+
+model doctors {
+  id_doctors_pk Int       @id @default(autoincrement())
+  name          String    @db.VarChar(100)
+  crm_number    String    @db.VarChar(10)
+  crm_state     String    @db.VarChar(2)
+  specialty     String    @db.VarChar(100)
+  is_active     Boolean   @default(true)
+  created_at    DateTime? @default(now()) @db.DateTime(0)
+  shifts        shifts[]
+  triages       triages[]
+
+  @@unique([crm_number, crm_state], map: "unique_crm")
+}
+
+model patients {
+  id_patients_pk Int       @id @default(autoincrement())
+  name           String    @db.VarChar(100)
+  cpf            String    @unique(map: "cpf") @db.VarChar(11)
+  birth_date     DateTime  @db.Date
+  created_at     DateTime? @default(now()) @db.DateTime(0)
+  triages        triages[]
+}
+
+// Plantões dos médicos
+model shifts {
+  id_shifts_pk  Int       @id @default(autoincrement())
+  doctors_id_fk Int
+  start_time    DateTime  @db.DateTime(0)
+  end_time      DateTime  @db.DateTime(0)
+  created_at    DateTime? @default(now()) @db.DateTime(0)
+  doctors       doctors   @relation(fields: [doctors_id_fk], references: [id_doctors_pk], onDelete: Cascade, onUpdate: Restrict, map: "shifts_ibfk_1")
+
+  @@index([doctors_id_fk], map: "doctors_id_fk")
+}
+
+// Triagens / atendimentos
+// priority: RED | ORANGE | YELLOW | GREEN | BLUE (Protocolo de Manchester)
+// status:   WAITING | IN_PROGRESS | FINISHED
+model triages {
+  id_triages_pk       Int       @id @default(autoincrement())
+  patients_id_fk     Int
+  doctors_id_fk      Int?
+  symptoms           String    @db.Text
+  temperature        Float
+  heart_rate         Int
+  oxygen_saturation  Int
+  pain_level         Int
+  is_unconscious     Boolean   @default(false)
+  has_severe_bleeding Boolean  @default(false)
+  priority           String    @db.VarChar(10)
+  status             String    @default("WAITING") @db.VarChar(20)
+  arrived_at         DateTime  @db.DateTime(0)
+  called_at          DateTime? @db.DateTime(0)
+  finished_at        DateTime? @db.DateTime(0)
+  patients           patients  @relation(fields: [patients_id_fk], references: [id_patients_pk], onDelete: Cascade, onUpdate: Restrict, map: "triages_ibfk_1")
+  doctors            doctors?  @relation(fields: [doctors_id_fk], references: [id_doctors_pk], onDelete: SetNull, onUpdate: Restrict, map: "triages_ibfk_2")
+
+  @@index([patients_id_fk], map: "patients_id_fk")
+  @@index([doctors_id_fk], map: "doctors_id_fk")
+}
