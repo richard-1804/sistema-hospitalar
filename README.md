@@ -9,7 +9,8 @@
 - **Mocks vs. Stubs:** Utilizamos a API de simulação do Jest (jest.fn()) para aplicar Mocks e Stubs na substituição dos repositórios/modelos (mockDoctorModel, mockShiftModel, mockTriageModel). Aplicamos Stubs ao definir comportamentos e retornos pré-determinados via mockResolvedValue para simular as respostas do banco de dados. Ao mesmo tempo, aplicamos Mocks para inspecionar e validar se os métodos foram efetivamente invocados com as entradas corretas, como em expect(mockDoctorModel.create).toHaveBeenCalledWith(doctorData).
 
 - **Padrão Factory:** O Padrão Factory foi implementado através do módulo hospitalFactory.js (com funções como createDoctorData(), createShiftData() e createTriageData()) para centralizar a criação de objetos e massa de dados de teste. Isso elimina a duplicação de código (princípio DRY), simplifica a escrita dos cenários e permite que cada teste sobrescreva apenas as propriedades necessárias para validar a sua regra de negócio específica (como alterar apenas o CRM para '111111').
-- **Princípios F.I.R.S.T.:**
+
+---
 
 # 2. PRINCÍPIO F.I.R.S.T
 >- **F** (Fast / Rápido): Executam em milissegundos, pois dependem apenas de processamento em memória e mocks, sem chamadas de I/O ou banco de dados.
