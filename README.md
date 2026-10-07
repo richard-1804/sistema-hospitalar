@@ -1,9 +1,23 @@
 # Sistema Hospitalar & Triagem — Backend
 
-Explicação do que faz cada arquivo do projeto.
+# 1. EXPLICAÇÃO GERAL DO SISTEMA
 
-## Raiz
+ O projeto consiste em uma suíte de testes unitários desenvolvida em JavaScript com Jest para validar as regras de negócio centrais de um sistema de saúde. O escopo abrange três módulos principais:
 
+- **Pirâmide de Testes:** Os testes desenvolvidos nesta suíte situam-se na base da Pirâmide de Testes, correspondendo aos testes unitários. O foco está em validar de forma isolada a lógica de negócio das classes de serviço (DoctorService, ShiftService, TriageService) sem interagir com banco de dados real, redes ou interfaces de usuário, garantindo uma suíte leve, extremamente rápida e de fácil manutenção.
+
+- **Mocks vs. Stubs:** Utilizamos a API de simulação do Jest (jest.fn()) para aplicar Mocks e Stubs na substituição dos repositórios/modelos (mockDoctorModel, mockShiftModel, mockTriageModel). Aplicamos Stubs ao definir comportamentos e retornos pré-determinados via mockResolvedValue para simular as respostas do banco de dados. Ao mesmo tempo, aplicamos Mocks para inspecionar e validar se os métodos foram efetivamente invocados com as entradas corretas, como em expect(mockDoctorModel.create).toHaveBeenCalledWith(doctorData).
+
+- **Padrão Factory:** O Padrão Factory foi implementado através do módulo hospitalFactory.js (com funções como createDoctorData(), createShiftData() e createTriageData()) para centralizar a criação de objetos e massa de dados de teste. Isso elimina a duplicação de código (princípio DRY), simplifica a escrita dos cenários e permite que cada teste sobrescreva apenas as propriedades necessárias para validar a sua regra de negócio específica (como alterar apenas o CRM para '111111').
+- **Princípios F.I.R.S.T.:**
+
+# 2. PRINCÍPIO F.I.R.S.T
+>- **F** (Fast / Rápido): Executam em milissegundos, pois dependem apenas de processamento em memória e mocks, sem chamadas de I/O ou banco de dados.
+>- **I** (Independent / Isolado): Cada teste é autocontido e reseta seu estado antes da execução no bloco beforeEach, sem dependências de ordem ou estados compartilhados.
+>- **R** (Repeatable / Repetível): Produzem exatamente os mesmos resultados em qualquer ambiente de desenvolvimento ou esteira de CI/CD, por utilizarem dados determinísticos gerados pelas factories.
+>- **S** (Self-validating / Auto-validável): Usam asserções declarativas do Jest (expect(...).toEqual(), rejects.toThrow()) que indicam claramente o resultado (aprovado ou reprovado) sem necessidade de inspeção manual.
+>- **T** (Thorough/Timely / Abrangente): Cobrem tanto o **"caminho feliz"** (sucesso no cadastro) quanto os cenários de exceção e limites das regras (como duração do plantão acima de 24h ou choque de horários).
+---
 | Arquivo | O que faz |
 |---|---|
 | `server.js` | Sobe o servidor Express, configura `cors` e `express.json()` e registra todas as rotas. |
