@@ -41,7 +41,7 @@ npm run dev
 ### Rodando os testes
 ```bash
 npm test                 # roda a suíte
-npm test -- --coverage    # roda a suíte com cobertura (mínimo exigido: 80%) 
+npx jest --coverage    # roda a suíte com cobertura (mínimo exigido: 80%) 
 ```
 <br>
 
