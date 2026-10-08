@@ -58,4 +58,37 @@ describe('doctorService', () => {
     mockDoctorModel.getDoctorByCrm.mockResolvedValue(doctorData);
     await expect(doctorService.registerDoctor(doctorData)).rejects.toThrow();
   });
+
+
+  it('deve listar todos os médicos', async () => {
+    mockDoctorModel.getAllDoctors.mockResolvedValue([{ id: 1, name: 'Dr. Silva' }]);
+    const result = await doctorService.getAllDoctors();
+    expect(result).toHaveLength(1);
+    expect(mockDoctorModel.getAllDoctors).toHaveBeenCalled();
+  });
+
+  it('deve buscar médico por ID', async () => {
+    mockDoctorModel.getDoctorById.mockResolvedValue({ id: 1, name: 'Dr. Silva' });
+    const result = await doctorService.getDoctorById(1);
+    expect(result).toBeDefined();
+    expect(mockDoctorModel.getDoctorById).toHaveBeenCalledWith(1);
+  });
+
+  it('deve atualizar os dados de um médico', async () => {
+    mockDoctorModel.getDoctorById.mockResolvedValue({ id: 1, name: 'Dr. Silva' });
+    mockDoctorModel.updateDoctor.mockResolvedValue({ id: 1, name: 'Dr. Silva Editado' });
+
+    const result = await doctorService.updateDoctor(1, { name: 'Dr. Silva Editado' });
+    expect(result).toBeDefined();
+    expect(mockDoctorModel.updateDoctor).toHaveBeenCalled();
+  });
+
+  it('deve deletar/desativar um médico', async () => {
+    mockDoctorModel.getDoctorById.mockResolvedValue({ id: 1, name: 'Dr. Silva' });
+    mockDoctorModel.deleteDoctor.mockResolvedValue(true);
+
+    const result = await doctorService.deleteDoctor(1);
+    expect(result).toBe(true);
+    expect(mockDoctorModel.deleteDoctor).toHaveBeenCalledWith(1);
+  });
 });
